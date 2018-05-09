@@ -65,7 +65,7 @@ function getCollection() {
 /**
  * Query the collection using SQL
  */
-function queryCollection(response) {
+function queryCollection() {
     console.log(`Querying collection through index:\n${config.collection.id}`);
 
     return new Promise((resolve, reject) => {
@@ -77,7 +77,7 @@ function queryCollection(response) {
             else {
                 for (var queryResult of results) {
                     let resultString = JSON.stringify(queryResult);
-                    console.log(`\tQuery returned ${resultString}`);
+                    //console.log(`\tQuery returned ${resultString}`);
                 }
                 console.log();
                 resolve(results);
@@ -168,12 +168,23 @@ function showfunc(response, pathName){
 function getUserDetails(response){
     // response.writeHead(200, {'Content-Type' : 'text/html'})
     // response.write('WILL GET THE USER DETIALS ');
+    var resl = [];
     getDatabase()
     .then(() => getCollection())
-    .then(() => queryCollection(response))
-    .then(() => { exit(`Completed successfully`); })
+    .then(() => queryCollection())
+    .then((querydata) => { 
+
+        for (var queryResult of querydata) {
+            let resultString = queryResult;
+            console.log(`\tQuery -returned---- ${resultString}`);
+            resl.push(resultString);
+        }
+        response.setHeader('Content-Type', 'application/json');
+        response.write(JSON.stringify(resl));
+        response.end();
+        exit(`Completed successfully--`); })
     .catch((error) => { exit(`Completed with error ${JSON.stringify(error)}`) });
-    response.end();
+   
 }
 
 
